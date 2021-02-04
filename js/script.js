@@ -1,62 +1,65 @@
 'use strict';
 
+let money,
+    budgetDay;
+
 //объявление переменных
-let money;
-let income;
-let addExpenses;
-let deposit;
-let mission = 1000000;
-let period;
-let budgetDay;
-
-//опрос пользователя
-money = +prompt('Ваш месячный доход?');
-if (isNaN(money)) {
-    alert('Вы ввели данные в некорректном формате. Введите число.');
-    money = +prompt('Ваш месячный доход?');
-}
-
-//дополнительные расходы
-addExpenses = prompt('Перечислите возможные расходы за расчитываемый период через зарятую');
-
-//проверка сбережений
-deposit = confirm('Есть ли у Вас депозит в банке?');
+let mission = 1000000; 
 
 //размер и вид обязательны расходов
-let expenses1 = prompt('Введите обязательную статью расходов');
-
-let amount1 = +prompt('Введите сумму на ' + expenses1 + ' :');
-if (isNaN(amount1)) {
-    alert('Вы ввели данные в некорректном формате. Введите число.');
-    amount1 = +prompt('Введите сумму на ' + expenses1 + ' :');
-}
-
-let expenses2 = prompt('Введите обязательную статью расходов');
-
-
-let amount2 = +prompt('Введите сумму на ' + expenses2 + ' :');
-if (isNaN(amount2)) {
-    alert('Вы ввели данные в некорректном формате. Введите число.');
-    amount2 = +prompt('Введите сумму на ' + expenses2 + ' :');
-}
+let expenses = [];
 
 //функции
 
-//функция расчета суммы расходов
-let getExpensesMonth = function (a, b){
-    return a + b;
+let isNumber = function (n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
+let start = function () {
+
+    do  {
+        money = prompt('Ваш месячный доход?(число)');
+    } while (!isNumber(money));
+
+};
+
+start();
+
+//функция расчета суммы расходов
+let getExpensesMonth = function () {
+    let sum = 0;
+    let temp;
+
+    for(let i = 0; i < 2; i++) {
+
+        expenses[i] = prompt('Введите обязательную статью расходов:');
+
+        do {
+            temp = prompt('Сколько это будет стоить?(число)');
+        } while (!isNumber(temp));
+        sum += +temp;
+    }
+    return sum;
+};
+
+let expensesAmount = getExpensesMonth();
+
 //функция расчета месячного бюджета
-let getAccumulatedMonth = function (){
-    return money - getExpensesMonth(amount1, amount2);
+let getAccumulatedMonth = function () {
+    return money - expensesAmount;
 };
 
 let accumulatedMonth = getAccumulatedMonth(money);
 
 //функция расчета количества месяцев для достижения цели накоплений
 let getTargetMonth = function () {
-    return (Math.ceil(mission / accumulatedMonth));
+    let months = (Math.ceil(mission / accumulatedMonth));
+    if (months > 0) {
+        return 'Цель будет достигнута за ' + months + ' месяцев';
+    } else {
+        return 'Цель не будет достигнута';
+    }
+     
 };
 
 //функция определения типа переменной
@@ -79,6 +82,12 @@ let getStatusIncome = function (){
 
 //конец блока функций
 
+//дополнительные расходы
+let addExpenses = prompt('Перечислите возможные расходы за расчитываемый период через зарятую');
+
+//проверка сбережений
+let deposit = confirm('Есть ли у Вас депозит в банке?');
+
 //расчет дневного бюджета
 budgetDay = Math.floor(accumulatedMonth/30);
 
@@ -86,8 +95,8 @@ budgetDay = Math.floor(accumulatedMonth/30);
 showTypeOF(money);
 showTypeOF(addExpenses);
 
-console.log('Расходы за месяц = ', getExpensesMonth(amount1, amount2));
+console.log('Расходы за месяц = ', expensesAmount);
 console.log('Возможные дополнительные расходы: ', addExpenses.split(', '));
-console.log('Месяцев для достижения цели: ', getTargetMonth());
+console.log(getTargetMonth());
 console.log('Дневной бюджет = ', budgetDay);
 getStatusIncome();
