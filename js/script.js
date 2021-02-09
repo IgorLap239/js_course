@@ -19,6 +19,8 @@ let appData = {
     expenses : {},
     addExpenses: [],
     deposit: false,
+    percentDeposit: 0,
+    moneyDeposit: 0,
     mission: 1000000,
     period: 12,
     budgetDay: 0,
@@ -26,15 +28,43 @@ let appData = {
     expensesMonth: 0,
     budget: start(),
     asking: function () {
+
+        //дополнительные расходы
+        if(confirm('Есть ли у Вас дополнительный источник заработка?')) {
+
+            let itemIncome;
+            do {
+            itemIncome = prompt('Какой у Вас дополнительный заработок?', 'Таксую');
+            } while (isNumber(itemIncome));
+
+            let cashIncome;
+            do {
+                cashIncome = prompt('Сколько в меся Вы на этом зарабатываете', 10000);
+            } while (!isNumber(cashIncome));
+            appData.income[itemIncome] = cashIncome;
+        }
+
         //дополнительные расходы
         let addExpenses = prompt('Перечислите возможные расходы за расчитываемый период через зарятую');
+
         appData.addExpenses = addExpenses.toLowerCase().split(', ');
+
+        appData.addExpenses = appData.addExpenses.map(function(word) {
+            word = word.charAt(0).toUpperCase() + word.substr(1);
+            return word;
+        });
+
         //проверка сбережений
         appData.deposit = confirm('Есть ли у Вас депозит в банке?');
 
         let temp;
+        let tempExpenses;
         for(let i = 0; i < 2; i++) {
-            let tempExpenses = prompt('Введите обязательную статью расходов:');
+            
+            do {
+                tempExpenses = prompt('Введите обязательную статью расходов:');
+            } while (isNumber(tempExpenses));
+
             do {
                 temp = prompt('Сколько это будет стоить?(число)');
             } while (!isNumber(temp));
@@ -51,7 +81,6 @@ let appData = {
     getBudget: function () {
         appData.budgetMonth = money - appData.expensesMonth;
         appData.budgetDay = Math.floor(appData.budgetMonth / 30);
-        //return money - appData.expensesMonth;
     },
     //функция расчета количества месяцев для достижения цели накоплений
     getTargetMonth: function () {
@@ -73,6 +102,20 @@ let appData = {
         } else if (appData.budgetDay < 0) {
             console.log('Что то пошло не так');
         }
+    },
+
+    getInfoDepost: function() {
+        if(appData.deposit) {
+            do {
+                appData.percentDeposit = prompt('Какой годовой проент?', '10');
+            } while (isNumber(appData.percentDeposit));
+            do {
+                appData.moneyDeposit = prompt('Какая сумма вложена?', 10000);
+            } while (!isNumber(appData.moneyDeposit));
+        }
+    },
+    calcSavedMoney: function() {
+        return appData.budgetMonth * appData.period;
     }
 };
 
@@ -84,6 +127,7 @@ appData.getBudget();
 
 //вывод в консоль
 console.log('Расходы за месяц = ', appData.expensesMonth);
+console.log('Возможные дополнительные расходы: ', appData.addExpenses.join(', '));
 console.log(appData.getTargetMonth());
 appData.getStatusIncome();
 
