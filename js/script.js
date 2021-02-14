@@ -186,4 +186,5 @@ start.addEventListener('click', appData.start);
 salaryAmount.addEventListener('change', inputValue);
 expensesAddButton.addEventListener('click', appData.addExpensesBlock);
 incomeAddButton.addEventListener('click', appData.addIncomeBlock);
-periodSelect.addEventListener('change', appData.calcSavedMoney);
+periodSelect.addEventListener('input', appData.calcSavedMoney);
+periodSelect.addEventListener('input', appData.showResult);
