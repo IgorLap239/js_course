@@ -61,8 +61,7 @@ let appData = {
       let inputOff = function () {
         let arrayOfInputs = document.querySelectorAll('.data input');
         arrayOfInputs.forEach(function(item) {
-          item.style.backgroundColor = 'grey';
-          item.readOnly = true;
+          item.disabled = true;
         });
       };
       inputOff();
@@ -79,23 +78,20 @@ let appData = {
       let clearInputs = function () {
         let arrayOfInputs = document.querySelectorAll('input');
         arrayOfInputs.forEach(function(item) {
+          item.disabled = false;
           item.value = '';
-          item.readOnly = false;
-          item.style.backgroundColor = '';
         });
 
         if (incomeItems.length > 1) {
           for (let i = 1; i < incomeItems.length; i++) {
             incomeItems[i].remove();
-        }
-        incomeItems.length = 1;
+          }
         }
 
         if (expensesItems.length > 1) {
           for (let i = 1; i < expensesItems.length; i++) {
             expensesItems[i].remove();
-        }
-        expensesItems.length = 1;
+          }
         }
         
       };
@@ -105,6 +101,8 @@ let appData = {
       document.getElementById('start').style.display = '';
       document.getElementById('cancel').style.display = 'none';
       document.getElementById('deposit-check').checked = false;
+      document.getElementsByTagName('button')[0].style.display = '';
+      expensesAddButton.style.display = '';
 
       start.disabled = true;
     },
@@ -125,6 +123,7 @@ let appData = {
       expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesAddButton);
       
       expensesItems = document.querySelectorAll('.expenses-items');
+      console.log(expensesItems.length);
 
       if (expensesItems.length === 3) {
         expensesAddButton.style.display = 'none';
