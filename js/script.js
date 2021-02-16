@@ -59,13 +59,14 @@ let appData = {
       this.showResult();
 
       let inputOff = function () {
-        let arrayOfInputs = document.querySelectorAll('input');
+        let arrayOfInputs = document.querySelectorAll('.data input');
         arrayOfInputs.forEach(function(item) {
+          item.style.backgroundColor = 'grey';
           item.readOnly = true;
         });
       };
       inputOff();
-      
+
       let changeButton = function () {
         document.getElementById('start').style.display = 'none';
         document.getElementById('cancel').style.display = 'block';
@@ -80,13 +81,30 @@ let appData = {
         arrayOfInputs.forEach(function(item) {
           item.value = '';
           item.readOnly = false;
+          item.style.backgroundColor = '';
         });
+
+        if (incomeItems.length > 1) {
+          for (let i = 1; i < incomeItems.length; i++) {
+            incomeItems[i].remove();
+        }
+        incomeItems.length = 1;
+        }
+
+        if (expensesItems.length > 1) {
+          for (let i = 1; i < expensesItems.length; i++) {
+            expensesItems[i].remove();
+        }
+        expensesItems.length = 1;
+        }
+        
       };
       clearInputs();
       periodSelect.value = 1;
       
       document.getElementById('start').style.display = '';
       document.getElementById('cancel').style.display = 'none';
+      document.getElementById('deposit-check').checked = false;
 
       start.disabled = true;
     },
