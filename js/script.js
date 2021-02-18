@@ -21,7 +21,8 @@ const start = document.getElementById('start'),
       periodSelect = document.querySelector('.period-select'),
       periodAmount = document.querySelector('.period-amount'),
       salaryAmount = document.querySelector('.salary-amount'),
-      incomeTitle = document.querySelector('.income-title');
+      incomeTitle = document.querySelector('.income-title'),
+      depositBank = document.querySelector('.deposit-bank');
 
 let expensesItems = document.querySelectorAll('.expenses-items'),
     incomeItems = document.querySelectorAll('.income-items');
@@ -54,6 +55,7 @@ class AppData {
     this.getIncomeMonth();
     this.getAddExpenses();
     this.getAddIncome();
+    this.getInfoDeposit();
     this.getBudget();
 
     this.showResult();
@@ -206,7 +208,8 @@ class AppData {
 
   //функция расчета месячного бюджета
   getBudget() {
-    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+    const monthDeposit = this.moneyDeposit * (this.percentDeposit / 100);
+    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
     this.budgetDay = Math.floor(this.budgetMonth / 30);
   }
 
@@ -218,6 +221,52 @@ class AppData {
   calcSavedMoney() {
     periodAmount.textContent = periodSelect.value;
     return this.budgetMonth * periodSelect.value;
+  }
+
+  getInfoDeposit() {
+    if (this.deposit) {
+        this.percentDeposit = depositPercent.value;
+        this.moneyDeposit = depositAmount.value;
+    }
+  }
+
+  isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+  changePercent() {
+    const valueSelect = this.value;
+    if (valueSelect === 'other') {
+      depositPercent.style.display = 'inline-block';
+    } else {
+      depositPercent.value = valueSelect;
+      depositPercent.style.display = 'none';
+    }
+  }
+
+  depositPercentChecker() {
+    if (!(this.isNumber(depositPercent.value)) || 0 >= +depositPercent.value || +depositPercent.value >= 100) {
+      start.disabled = true;
+      alert("Введите корректное значение в поле проценты");
+    } else {
+      start.disabled = false;
+    }
+  }
+
+  depositHandler() {
+    if (depositCheck.checked) {
+      depositBank.style.display = 'inline-block';
+      depositAmount.style.display = 'inline-block';
+      this.deposit = true;
+      depositBank.addEventListener('change', this.changePercent);
+    } else {
+      depositBank.style.display = 'none';
+      depositAmount.style.display = 'none';
+      depositBank.value = '';
+      depositAmount.value = '';
+      this.deposit = false;
+      depositBank.removeEventListener('change', this.changePercent);
+    }
   }
 
   eventListeners() {
@@ -235,7 +284,9 @@ class AppData {
     expensesAddButton.addEventListener('click', this.addExpensesBlock);
     incomeAddButton.addEventListener('click', this.addIncomeBlock);
     periodSelect.addEventListener('input', this.calcSavedMoney.bind(this));
-    periodSelect.addEventListener('input', this.showResult.bind(this)); 
+    periodSelect.addEventListener('input', this.showResult.bind(this));
+    depositCheck.addEventListener('change', this.depositHandler.bind(this));
+    depositPercent.addEventListener('change', this.depositPercentChecker.bind(this));
   }
 }
 
