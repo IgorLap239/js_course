@@ -82,13 +82,11 @@ window.addEventListener('DOMContentLoaded', () => {
             popupContent = document.querySelector('.popup-content');
 
         popupBtn.forEach((elem) => elem.addEventListener('click', () => {
-            popup.style.height = '-100%';
             popup.style.display = 'block';
             // в то время как timePassed идёт от 0 до 2000
             // left изменяет значение от 0px до 400px
             if (document.documentElement.clientWidth > 768) {
                 const draw = (timePassed) => {
-                    popup.style.height = timePassed / 10 + '%';
                     popupContent.style.top = timePassed / 10 + 'px';
 
                 };
