@@ -63,7 +63,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         menu.addEventListener('click', (event) => {
             let target = event.target;
-            if (target.closest('li') || target.matches('.close-btn')) {
+            if (target.closest('a')) {
                 handlerMenu();
             }
         });
@@ -107,7 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
         popup.addEventListener('click', (event) => {
             let target = event.target;
 
-            if (target.classList.contains('.popup-close')) {
+            if (target.classList.contains('popup-close')) {
                 popup.style.display = 'none';
             } else {
                 target = target.closest('.popup-content');
