@@ -173,7 +173,6 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         const addDot = (items) => {
-            console.log(items);
             let li = document.createElement('li');
             li.classList.add('dot');
             li.classList.add('dot-active');
@@ -260,4 +259,76 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     slider();
+
+    //калькулятор
+    const calculator = () => {
+        const calc = document.getElementById('calc');
+
+        const onlyNumbers = (e) => {
+            const target = e.target;
+            if (target.matches('input')) {
+                target.value = target.value.replace(/\D/, '');
+            }
+        };
+
+        calc.addEventListener('input', onlyNumbers);
+    };
+
+    calculator();
+
+    //наша команда
+
+    const command = () => {
+        const command = document.querySelector('.command');
+        let tmpSrc;
+
+        const photoChanger = (e) => {
+            if (e.target.matches('.command__photo')) {
+                tmpSrc = e.target.src;
+                e.target.src = e.target.dataset.img;
+            }
+        };
+
+        const photoReturn = (e) => {
+            if (e.target.matches('.command__photo')) {
+                e.target.src = tmpSrc;
+            }
+        };
+
+        command.addEventListener('mouseover', photoChanger);
+        command.addEventListener('mouseout', photoReturn);
+
+    };
+
+    command();
+
+    //форма обратной связи
+    const connect = () => {
+        const connect = document.getElementById('connect');
+
+        const connectFormInput = (e) => {
+            const target = e.target;
+            if (target.matches('input[placeholder="Ваше имя"]') || target.matches('input[placeholder="Ваше сообщение"]')) {
+                target.value = target.value.replace(/[^А-Яа-я\- ]/g, '');
+            } else if (target.matches('input[placeholder="E-mail"]')) {
+                target.value = target.value.replace(/[^A-Za-z\-@_'`!\.\* ]/g, '');
+            } else if (target.matches('input[placeholder="Номер телефона"]')) {
+                target.value = target.value.replace(/^[-()]*\D/g, '');
+            }
+        };
+
+        const connectFormValidation = (e) => {
+            const target = e.target;
+            target.value = target.value.replace(/ +/g, ' ').trim();
+            if (target.matches('input[placeholder="Ваше имя"]')) {
+                target.value = target.value[0].toUpperCase() + target.value.substr(1, ).toLowerCase();
+            }
+        };
+
+        connect.addEventListener('input', connectFormInput);
+        connect.addEventListener('focusout', connectFormValidation);
+    };
+
+    connect();
+
 });
