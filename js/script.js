@@ -299,7 +299,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
 
-            totalValue.textContent = parseInt(total);
+            let newTotal = parseInt(total),
+                interval = 0;
+            if (oldTotal > newTotal) {
+                interval = setInterval(() => {
+                    if (oldTotal === newTotal) {
+                        totalValue.textContent = newTotal;
+                        clearInterval(interval);
+                    } else {
+                        totalValue.textContent = oldTotal--;
+                    }
+                }, 5);
+            } else if (oldTotal < newTotal) {
+                interval = setInterval(() => {
+                    if (oldTotal === newTotal) {
+                        totalValue.textContent = newTotal;
+                        clearInterval(interval);
+                    } else {
+                        totalValue.textContent = oldTotal++;
+                    }
+                }, 5);
+            }
 
         };
 
