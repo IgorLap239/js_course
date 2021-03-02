@@ -269,6 +269,7 @@ window.addEventListener('DOMContentLoaded', () => {
             calcDay = document.querySelector('.calc-day'),
             totalValue = document.getElementById('total');
 
+
         const onlyNumbers = (e) => {
             const target = e.target;
             if (target.matches('input')) {
@@ -281,7 +282,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 squareValue = +calcSquare.value;
             let total = 0,
                 countValue = 1,
-                dayValue = 1;
+                dayValue = 1,
+                oldTotal = +totalValue.textContent;
 
             if (calcCount.value > 1) {
                 countValue += (calcCount.value - 1) / 10;
@@ -297,7 +299,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 total = price * typeValue * squareValue * countValue * dayValue;
             }
 
-            totalValue.textContent = total;
+            totalValue.textContent = parseInt(total);
+
         };
 
         calcBlock.addEventListener('input', onlyNumbers);
