@@ -261,8 +261,13 @@ window.addEventListener('DOMContentLoaded', () => {
     slider();
 
     //калькулятор
-    const calculator = () => {
-        const calc = document.getElementById('calc');
+    const calculator = (price = 100) => {
+        const calcBlock = document.querySelector('.calc-block'),
+            calcType = document.querySelector('.calc-type'),
+            calcSquare = document.querySelector('.calc-square'),
+            calcCount = document.querySelector('.calc-count'),
+            calcDay = document.querySelector('.calc-day'),
+            totalValue = document.getElementById('total');
 
         const onlyNumbers = (e) => {
             const target = e.target;
@@ -271,10 +276,40 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        calc.addEventListener('input', onlyNumbers);
+        const countSum = () => {
+            const typeValue = calcType.options[calcType.selectedIndex].value,
+                squareValue = +calcSquare.value;
+            let total = 0,
+                countValue = 1,
+                dayValue = 1;
+
+            if (calcCount.value > 1) {
+                countValue += (calcCount.value - 1) / 10;
+            }
+
+            if (calcDay.value && calcDay.value < 5) {
+                dayValue *= 2;
+            } else if (calcDay.value && calcDay.value < 10) {
+                dayValue *= 1.5;
+            }
+
+            if (typeValue && squareValue) {
+                total = price * typeValue * squareValue * countValue * dayValue;
+            }
+
+            totalValue.textContent = total;
+        };
+
+        calcBlock.addEventListener('input', onlyNumbers);
+        calcBlock.addEventListener('change', (event) => {
+            const target = event.target;
+            if (target.matches('select') || target.matches('input')) {
+                countSum();
+            }
+        });
     };
 
-    calculator();
+    calculator(100);
 
     //наша команда
 
@@ -320,6 +355,9 @@ window.addEventListener('DOMContentLoaded', () => {
         const connectFormValidation = (e) => {
             const target = e.target;
             target.value = target.value.replace(/ +/g, ' ').trim();
+            target.value = target.value.replace(/-+/g, '-').
+            target.value = target.value.replace(/^-*/g, '');
+            target.value = target.value.replace(/-*$/g, '');
             if (target.matches('input[placeholder="Ваше имя"]')) {
                 target.value = target.value[0].toUpperCase() + target.value.substr(1, ).toLowerCase();
             }
