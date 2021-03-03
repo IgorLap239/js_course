@@ -309,7 +309,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     } else {
                         totalValue.textContent = oldTotal--;
                     }
-                }, 5);
+                }, 1);
             } else if (oldTotal < newTotal) {
                 interval = setInterval(() => {
                     if (oldTotal === newTotal) {
@@ -318,7 +318,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     } else {
                         totalValue.textContent = oldTotal++;
                     }
-                }, 5);
+                }, 1);
             }
 
         };
@@ -378,7 +378,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const connectFormValidation = (e) => {
             const target = e.target;
             target.value = target.value.replace(/ +/g, ' ').trim();
-            target.value = target.value.replace(/-+/g, '-').
+            target.value = target.value.replace(/-+/g, '-');
             target.value = target.value.replace(/^-*/g, '');
             target.value = target.value.replace(/-*$/g, '');
             if (target.matches('input[placeholder="Ваше имя"]')) {
