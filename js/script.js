@@ -58,7 +58,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const handlerMenu = (event) => {
             const target = event.target;
-            console.log(target);
             if (menu.classList.contains('active-menu')) {
                 if (target.closest('a') || target.closest('main')) {
                     menu.classList.toggle('active-menu');
@@ -513,7 +512,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const sendForm = () => {
         const errorMessage = 'Что-то пошло не так...',
-            loadMessage = 'Загрузка...',
             successMessage = 'Спасибо Мы скоро с вами свяжемся!';
 
         const form1 = document.getElementById('form1'),
@@ -542,10 +540,29 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         };
 
+        const animate = () => {
+            let start = performance.now();
+            const duration = 1000;
+            let timeFraction = start / duration;
+            if (timeFraction > 1) {
+                timeFraction = 1;
+            }
+            if (timeFraction < 1) {
+                requestAnimationFrame(animate);
+            }
+        };
+
         const postData = (body, outputData, errorData) => {
             const request = new XMLHttpRequest();
             request.addEventListener('readystatechange', () => {
-                statusMessage.textContent = loadMessage;
+                statusMessage.insertAdjacentHTML('afterBegin', `
+                <progress id="elem"></progress>
+                `);
+                document.getElementById('elem').style.cssText = `
+                    width: 5%;
+                `;
+                requestAnimationFrame(animate);
+
 
                 if (request.readyState !== 4) {
                     return;
@@ -567,6 +584,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const clearInputs = (target) => {
             target.querySelectorAll('input').forEach(item => {
                 item.value = '';
+                item.classList.remove('success');
             });
         };
 
