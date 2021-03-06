@@ -54,20 +54,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //меню
     const toggleMenu = () => {
-        const btnMenu = document.querySelector('.menu'),
-            menu = document.querySelector('menu');
+        const menu = document.querySelector('menu');
 
-        const handlerMenu = () => {
-            menu.classList.toggle('active-menu');
-        };
-
-        menu.addEventListener('click', (event) => {
-            let target = event.target;
-            if (target.closest('a')) {
-                handlerMenu();
+        const handlerMenu = (event) => {
+            const target = event.target;
+            console.log(target);
+            if (menu.classList.contains('active-menu')) {
+                if (target.closest('a') || target.closest('main')) {
+                    menu.classList.toggle('active-menu');
+                }
+            } else if (!menu.classList.contains('active-menu')) {
+                if (target.closest('.menu')) {
+                    menu.classList.toggle('active-menu');
+                }
             }
-        });
-        btnMenu.addEventListener('click', handlerMenu);
+        };
+        window.addEventListener('click', handlerMenu);
 
     };
 
