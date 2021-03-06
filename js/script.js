@@ -76,11 +76,17 @@ window.addEventListener('DOMContentLoaded', () => {
     //плавная прокрутка по кнопке
     const smoothScrolling = () => {
         const anchor = document.querySelector('a[href="#service-block"]');
+        let menuItems = document.querySelectorAll('menu > ul > li > a');
 
         const scrolling = (event) => {
             event.preventDefault();
-            const V = 1,
-                blockID = anchor.getAttribute('href');
+            const V = 1;
+            let target = event.target;
+
+            if (target.closest('main')) {
+                target = anchor;
+            }
+            const blockID = target.getAttribute('href');
             let w = window.pageYOffset,
                 t = document.querySelector(blockID).getBoundingClientRect().top,
                 start = null;
@@ -102,6 +108,10 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         anchor.addEventListener('click', scrolling);
+        for (let item of menuItems) {
+            item.addEventListener('click', scrolling);
+        }
+
     };
     smoothScrolling();
 
