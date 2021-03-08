@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable indent */
 /* eslint-disable prefer-const */
 window.addEventListener('DOMContentLoaded', () => {
@@ -512,7 +513,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const sendForm = () => {
         const errorMessage = 'Что-то пошло не так...',
-            successMessage = 'Спасибо Мы скоро с вами свяжемся!';
+            successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
 
         const form1 = document.getElementById('form1'),
             form2 = document.getElementById('form2'),
@@ -531,13 +532,15 @@ window.addEventListener('DOMContentLoaded', () => {
             for (let val of formData.entries()) {
                 body[val[0]] = val[1];
             }
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                clearInputs(target);
-            }, (error) => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-            });
+            postData(body)
+                .then(() => {
+                    statusMessage.textContent = successMessage;
+                    clearInputs(target);
+                })
+                .catch((error) => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                });
         };
 
         const animate = () => {
@@ -552,33 +555,35 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        const postData = (body, outputData, errorData) => {
-            const request = new XMLHttpRequest();
-            request.addEventListener('readystatechange', () => {
-                statusMessage.insertAdjacentHTML('afterBegin', `
-                <progress id="elem"></progress>
-                `);
-                document.getElementById('elem').style.cssText = `
-                    width: 5%;
-                `;
-                requestAnimationFrame(animate);
+        const postData = (body) => {
+            return new Promise((resolve, reject) => {
+                const request = new XMLHttpRequest();
+                request.addEventListener('readystatechange', () => {
+                    statusMessage.insertAdjacentHTML('afterBegin', `
+                        <progress id="elem"></progress>
+                        `);
+                    document.getElementById('elem').style.cssText = `
+                            width: 5%;
+                        `;
+                    requestAnimationFrame(animate);
 
 
-                if (request.readyState !== 4) {
-                    return;
-                }
+                    if (request.readyState !== 4) {
+                        return;
+                    }
 
-                if (request.status === 200) {
-                    outputData();
-                } else {
-                    errorData(request.status);
-                }
+                    if (request.status === 200) {
+                        resolve();
+                    } else {
+                        reject(request.status);
+                    }
 
+                });
+
+                request.open('POST', './server.php');
+                request.setRequestHeader('Content-Type', 'application/json');
+                request.send(JSON.stringify(body));
             });
-
-            request.open('POST', './server.php');
-            request.setRequestHeader('Content-Type', 'application/json');
-            request.send(JSON.stringify(body));
         };
 
         const clearInputs = (target) => {
