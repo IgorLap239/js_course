@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable arrow-body-style */
 /* eslint-disable indent */
 /* eslint-disable prefer-const */
@@ -51,7 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    countTimer('26 february 2021');
+    countTimer('10 march 2021');
 
     //меню
     const toggleMenu = () => {
@@ -161,6 +162,8 @@ window.addEventListener('DOMContentLoaded', () => {
             tab = tabHeader.querySelectorAll('.service-header-tab'),
             tabContent = document.querySelectorAll('.service-tab');
 
+        tabContent[1].classList.add('d-none');
+        tabContent[2].classList.add('d-none');
         const toggleTabContent = (index) => {
             for (let i = 0; i < tab.length; i++) {
                 if (index === i) {
@@ -341,18 +344,20 @@ window.addEventListener('DOMContentLoaded', () => {
                         totalValue.textContent = newTotal;
                         clearInterval(interval);
                     } else {
-                        totalValue.textContent = oldTotal--;
+                        oldTotal -= 100;
+                        totalValue.textContent = oldTotal;
                     }
-                }, 1);
+                }, 10);
             } else if (oldTotal < newTotal) {
                 interval = setInterval(() => {
                     if (oldTotal === newTotal) {
                         totalValue.textContent = newTotal;
                         clearInterval(interval);
                     } else {
-                        totalValue.textContent = oldTotal++;
+                        oldTotal += 100;
+                        totalValue.textContent = oldTotal;
                     }
-                }, 1);
+                }, 10);
             }
 
         };
@@ -533,14 +538,35 @@ window.addEventListener('DOMContentLoaded', () => {
                 body[val[0]] = val[1];
             }
             postData(body)
-                .then(() => {
+                .then((response) => {
+                    if (response.status !== 200) {
+                        throw new Error('status network not 200');
+                    }
                     statusMessage.textContent = successMessage;
                     clearInputs(target);
+                    setTimeout(() => { statusMessage.remove() }, 5000)
                 })
                 .catch((error) => {
                     statusMessage.textContent = errorMessage;
                     console.error(error);
                 });
+        };
+
+        const postData = (body) => {
+            statusMessage.insertAdjacentHTML('afterBegin', `
+                    <progress id="elem"></progress>
+                    `);
+            document.getElementById('elem').style.cssText = `
+                        width: 5%;
+                    `;
+            requestAnimationFrame(animate);
+            return fetch('./server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
         };
 
         const animate = () => {
@@ -553,37 +579,6 @@ window.addEventListener('DOMContentLoaded', () => {
             if (timeFraction < 1) {
                 requestAnimationFrame(animate);
             }
-        };
-
-        const postData = (body) => {
-            return new Promise((resolve, reject) => {
-                const request = new XMLHttpRequest();
-                request.addEventListener('readystatechange', () => {
-                    statusMessage.insertAdjacentHTML('afterBegin', `
-                        <progress id="elem"></progress>
-                        `);
-                    document.getElementById('elem').style.cssText = `
-                            width: 5%;
-                        `;
-                    requestAnimationFrame(animate);
-
-
-                    if (request.readyState !== 4) {
-                        return;
-                    }
-
-                    if (request.status === 200) {
-                        resolve();
-                    } else {
-                        reject(request.status);
-                    }
-
-                });
-
-                request.open('POST', './server.php');
-                request.setRequestHeader('Content-Type', 'application/json');
-                request.send(JSON.stringify(body));
-            });
         };
 
         const clearInputs = (target) => {
