@@ -14,9 +14,8 @@ const validation = () => {
         if (target.matches('input[placeholder="Ваше имя"]')) {
             target.value = target.value.replace(/[^А-Яа-я ]/g, '');
         } else if (target.matches('input[placeholder="Ваше сообщение"]')) {
-            target.value = target.value.replace(/[^А-Яа-я,\.\?!^0-9 ]/g, '');
+            target.value = target.value.replace(/[^А-Яа-я,\?!^0-9 ]/g, '');
         } else if (target.matches('input[placeholder="E-mail"]') || target.matches('input[placeholder="Ваш E-mail"]')) {
-            target.setAttribute("required", "required");
             target.value = target.value.replace(/[^A-Za-z\-@_'`!\.\* ]/g, '');
         } else if (target.matches('input[placeholder="Номер телефона"]') || target.matches('input[placeholder="Ваш номер телефона"]')) {
             target.value = target.value.replace(/[^0-9\+]/g, '');
@@ -24,7 +23,8 @@ const validation = () => {
     };
 
     const connectFormValidation = (e) => {
-        const target = e.target;
+        const target = e.target,
+            targetForm = target.closest('form');
         target.value = target.value.replace(/ +/g, ' ').trim();
         target.value = target.value.replace(/-+/g, '-');
         target.value = target.value.replace(/^-*/g, '');
@@ -32,22 +32,41 @@ const validation = () => {
         if (target.matches('input[placeholder="Ваше имя"]')) {
             if (target.value.length < 2) {
                 showError(target);
-                target.closest('form').querySelector('.form-btn').setAttribute("disabled", "disabled");
+                targetForm.querySelector('.form-btn').setAttribute("disabled", "disabled");
             } else {
                 showSuccess(target);
-                target.closest('form').querySelector('.form-btn').removeAttribute("disabled");
+                targetForm.querySelector('.form-btn').removeAttribute("disabled");
+                targetForm.querySelector('.form-btn').style.display = 'inline-block';
                 target.value = target.value[0].toUpperCase() + target.value.substr(1, ).toLowerCase();
             }
         }
         if (target.matches('input[placeholder="Номер телефона"]') || target.matches('input[placeholder="Ваш номер телефона"]')) {
             if ((target.value[0] !== '+' && target.value.length === 7) || (target.value[0] !== '+' && target.value.length === 11) || (target.value[0] === '+' && target.value.length === 12)) {
                 showSuccess(target);
-                target.closest('form').querySelector('.form-btn').removeAttribute("disabled");
+                targetForm.querySelector('.form-btn').removeAttribute("disabled");
+                targetForm.querySelector('.form-btn').style.display = 'inline-block';
             } else {
                 showError(target);
-                target.closest('form').querySelector('.form-btn').setAttribute("disabled", "disabled");
+                targetForm.querySelector('.form-btn').setAttribute("disabled", "disabled");
             }
         }
+        if (target.matches('input[placeholder="E-mail"]') || target.matches('input[placeholder="Ваш E-mail"]')) {
+            if (!target.value.match(/\w+@\w+\.(\w){2,3}/ig)) {
+                showError(target);
+                targetForm.querySelector('.form-btn').setAttribute("disabled", "disabled");
+            } else {
+                showSuccess(target);
+                targetForm.querySelector('.form-btn').removeAttribute("disabled");
+                targetForm.querySelector('.form-btn').style.display = 'inline-block';
+            }
+        }
+        let targetFormInputs = targetForm.querySelectorAll('input');
+        targetFormInputs.forEach((item) => {
+            if (item.classList.contains('error')) {
+                targetForm.querySelector('.form-btn').setAttribute("disabled", "disabled");
+                targetForm.querySelector('.form-btn').style.display = 'none';
+            }
+        })
     };
 
     const showError = (elem) => {
@@ -61,6 +80,8 @@ const validation = () => {
             errorDiv.textContent = 'Имя должно состоять минимум из 2 символов';
         } else if (elem.matches('input[placeholder="Номер телефона"]') || elem.matches('input[placeholder="Ваш номер телефона"]')) {
             errorDiv.textContent = 'Это не номер телефона';
+        } else if (elem.matches('input[placeholder="E-mail"]') || elem.matches('input[placeholder="Ваш E-mail"]')) {
+            errorDiv.textContent = 'Неверный формат Email';
         }
         errorDiv.classList.add('validator-error');
         elem.insertAdjacentElement('afterend', errorDiv);

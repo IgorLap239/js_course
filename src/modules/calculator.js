@@ -6,6 +6,8 @@ const calculator = (price = 100) => {
         calcDay = document.querySelector('.calc-day'),
         totalValue = document.getElementById('total');
 
+    let interval;
+
 
     const onlyNumbers = (e) => {
         const target = e.target;
@@ -17,11 +19,11 @@ const calculator = (price = 100) => {
     const countSum = () => {
         const typeValue = calcType.options[calcType.selectedIndex].value,
             squareValue = +calcSquare.value;
-        let total = 0,
-            countValue = 1,
-            dayValue = 1,
-            oldTotal = +totalValue.textContent;
-
+        let countValue = 1,
+            dayValue = 1;
+        if (typeValue === '' || squareValue === 0 || calcSquare.textContent !== '') {
+            return 0;
+        }
         if (calcCount.value > 1) {
             countValue += (calcCount.value - 1) / 10;
         }
@@ -33,40 +35,42 @@ const calculator = (price = 100) => {
         }
 
         if (typeValue && squareValue) {
-            total = price * typeValue * squareValue * countValue * dayValue;
+            return parseInt(price * typeValue * squareValue * countValue * dayValue);
         }
+    };
 
-        let newTotal = parseInt(total),
-            interval = 0;
-        if (oldTotal > newTotal) {
-            interval = setInterval(() => {
-                if (oldTotal === newTotal) {
-                    totalValue.textContent = newTotal;
-                    clearInterval(interval);
-                } else {
-                    oldTotal -= 100;
-                    totalValue.textContent = oldTotal;
-                }
-            }, 10);
-        } else if (oldTotal < newTotal) {
-            interval = setInterval(() => {
-                if (oldTotal === newTotal) {
-                    totalValue.textContent = newTotal;
-                    clearInterval(interval);
-                } else {
-                    oldTotal += 100;
-                    totalValue.textContent = oldTotal;
-                }
-            }, 10);
-        }
+    const totalAnimate = (newTotal, oldTotal) => {
+        interval = setInterval(() => {
+            if (oldTotal === newTotal) {
+                totalValue.textContent = newTotal;
+            } else {
+                oldTotal += 100;
+                totalValue.textContent = oldTotal;
+            }
+        }, 10);
+    };
 
+    const startAnim = () => {
+        let oldTotal = 0,
+            newTotal = countSum();
+        totalAnimate(newTotal, oldTotal);
+    };
+
+    const stopAnim = () => {
+        clearInterval(interval);
     };
 
     calcBlock.addEventListener('input', onlyNumbers);
     calcBlock.addEventListener('change', (event) => {
         const target = event.target;
         if (target.matches('select') || target.matches('input')) {
-            countSum();
+            if (calcSquare.value !== 0 && calcSquare.textContent !== ' ' && calcType.value !== '') {
+                stopAnim();
+                startAnim();
+            } else {
+                totalValue.textContent = 0;
+                return;
+            }
         }
     });
 };
